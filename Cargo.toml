@@ -1,0 +1,7 @@
+[workspace]
+name = "rolang"
+resolver = "2"
+members = ["roc", "rolan"]
+
+[workspace.dependencies]
+thiserror = "1"

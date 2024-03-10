@@ -1,0 +1,18 @@
+entry main;
+use std::println;
+
+fn main() {
+    let a = fib(30);
+    println(a);
+};
+
+fn fib(n: int) {
+    if n <= 1 {
+        return n;
+    };
+    return fib(n-1) + fib(n-2);
+};
+
+real    0m12.220s
+user    0m12.209s
+sys     0m0.010s

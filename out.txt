@@ -1,0 +1,167 @@
+AST {
+    outer_stmts: [
+        Entry(
+            ASTEntry {
+                fn_name: "main",
+            },
+        ),
+        Use(
+            ASTUse {
+                path: ASTTypePath {
+                    path: [
+                        "std",
+                        "println",
+                    ],
+                },
+            },
+        ),
+        FnDef(
+            ASTFnDef {
+                fn_name: "main",
+                args: [],
+                ret_type: None,
+                block: ASTBlock {
+                    stmts: [
+                        VarDef(
+                            ASTVarDef {
+                                name: "a",
+                                ty: None,
+                                assign: Some(
+                                    FnCall(
+                                        ASTFnCall {
+                                            function: "fib",
+                                            args: [
+                                                Literal(
+                                                    Number(
+                                                        10.0,
+                                                    ),
+                                                ),
+                                            ],
+                                        },
+                                    ),
+                                ),
+                            },
+                        ),
+                        FnCall(
+                            ASTFnCall {
+                                function: "println",
+                                args: [
+                                    Variable(
+                                        "a",
+                                    ),
+                                ],
+                            },
+                        ),
+                    ],
+                },
+            },
+        ),
+        FnDef(
+            ASTFnDef {
+                fn_name: "fib",
+                args: [
+                    ASTTypedVar {
+                        var: "n",
+                        ty: ASTTypePath {
+                            path: [
+                                "int",
+                            ],
+                        },
+                    },
+                ],
+                ret_type: None,
+                block: ASTBlock {
+                    stmts: [
+                        FnCall(
+                            ASTFnCall {
+                                function: "println",
+                                args: [
+                                    Variable(
+                                        "n",
+                                    ),
+                                ],
+                            },
+                        ),
+                        IfStmt(
+                            ASTIfStmt {
+                                expr: InnerExpr(
+                                    ASTInnerExpr {
+                                        lhs: Variable(
+                                            "n",
+                                        ),
+                                        op: LTE,
+                                        rhs: Literal(
+                                            Number(
+                                                1.0,
+                                            ),
+                                        ),
+                                    },
+                                ),
+                                block: ASTBlock {
+                                    stmts: [
+                                        RetStmt(
+                                            ASTRetStmt {
+                                                expr: Variable(
+                                                    "n",
+                                                ),
+                                            },
+                                        ),
+                                    ],
+                                },
+                            },
+                        ),
+                        RetStmt(
+                            ASTRetStmt {
+                                expr: InnerExpr(
+                                    ASTInnerExpr {
+                                        lhs: FnCall(
+                                            ASTFnCall {
+                                                function: "fib",
+                                                args: [
+                                                    InnerExpr(
+                                                        ASTInnerExpr {
+                                                            lhs: Variable(
+                                                                "n",
+                                                            ),
+                                                            op: Sub,
+                                                            rhs: Literal(
+                                                                Number(
+                                                                    1.0,
+                                                                ),
+                                                            ),
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                        ),
+                                        op: Add,
+                                        rhs: FnCall(
+                                            ASTFnCall {
+                                                function: "fib",
+                                                args: [
+                                                    InnerExpr(
+                                                        ASTInnerExpr {
+                                                            lhs: Variable(
+                                                                "n",
+                                                            ),
+                                                            op: Sub,
+                                                            rhs: Literal(
+                                                                Number(
+                                                                    2.0,
+                                                                ),
+                                                            ),
+                                                        },
+                                                    ),
+                                                ],
+                                            },
+                                        ),
+                                    },
+                                ),
+                            },
+                        ),
+                    ],
+                },
+            },
+        ),
+    ],
+}

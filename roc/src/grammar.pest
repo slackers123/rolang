@@ -1,0 +1,64 @@
+File = { OuterStmt* ~ EOI }
+
+OuterStmt = { (Use | Entry | FnDef) ~ ";" }
+
+Use = { "use" ~ ModPathOrTypePath }
+
+Entry = { "entry " ~ Ident }
+
+FnDef = { "fn" ~ Ident ~ "(" ~ TypedVarList? ~ ")" ~ ("->" ~ TypePath)? ~ Block }
+
+TypedVarList = { TypedVar ~ ("," ~ TypedVar)* }
+
+TypedVar = { Ident ~ ":" ~ TypePath }
+
+ModPathOrTypePath = { TypePath }
+
+TypePath = { Ident ~ ("::" ~ Ident)* }
+
+Ident = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+
+Block = { "{" ~ BlockStmt* ~ "}" }
+
+BlockStmt = { (IfStmt | VarDef | FnCall | VarAssign | RetStmt) ~ ";" }
+
+RetStmt = { "return" ~ Expr }
+
+IfStmt = { "if" ~ Expr ~ Block ~ ("else" ~ "if" ~ Expr ~ Block)* ~ ("else" ~ Block)? }
+
+VarDef = { "let" ~ (Ident | TypedVar) ~ ("=" ~ Expr)? }
+
+FnCall = { Ident ~ "(" ~ ExprList? ~ ")" }
+
+VarAssign = { Ident ~ "=" ~ Expr }
+
+ExprList = { Expr ~ ("," ~ Expr)* ~ ","? }
+
+Expr = { Neg? ~ EqualExpr }
+
+EqualExpr = { AddExpr ~ (( Neq | LTE | LT | GTE | GT | Eq ) ~ AddExpr)* }
+
+AddExpr = { MulExpr ~ ((Add | Sub) ~ MulExpr)* }
+
+MulExpr = { PrimExpr ~ ((Mul | Div | Mod) ~ PrimExpr)* }
+
+PrimExpr = { number | ("(" ~ Expr ~ ")") | FnCall | Ident }
+
+number = @{ int ~ ("." ~ int)? }
+int    =  { ASCII_DIGIT+ }
+
+Eq  = { "==" }
+Neq = { "!=" }
+Add = { "+" }
+Sub = { "-" }
+Mul = { "*" }
+Div = { "/" }
+Mod = { "%" }
+LT  = { "<" }
+LTE = { "<=" }
+GT  = { ">" }
+GTE = { ">=" }
+
+Neg = { "!" }
+
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
