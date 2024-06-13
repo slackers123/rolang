@@ -5,6 +5,7 @@ use pest::Parser;
 use thiserror::Error;
 
 mod ast;
+pub mod bytecode;
 mod parser;
 mod ty;
 mod walker;

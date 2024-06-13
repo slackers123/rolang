@@ -2,7 +2,7 @@ entry main;
 use std::println;
 
 fn main() {
-    let a = fib(30);
+    let a = fib(20);
     println(a);
 };
 
