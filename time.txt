@@ -16,3 +16,7 @@ fn fib(n: int) {
 real    0m12.220s
 user    0m12.209s
 sys     0m0.010s
+
+Executed in    2.36 secs    fish           external
+   usr time    2.16 secs  141.00 micros    2.16 secs
+   sys time    0.02 secs  926.00 micros    0.02 secs

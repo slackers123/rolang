@@ -3,6 +3,9 @@ use std::{collections::HashMap, fmt::Display};
 use instructions::{Instruction, Source, Target};
 use interpreter::Interpreter;
 
+use crate::ty::Literal;
+
+pub mod generator;
 pub mod instructions;
 pub mod interpreter;
 
@@ -32,6 +35,15 @@ pub enum BcValue {
     Bool(bool),
     #[default]
     Undefined,
+}
+
+impl BcValue {
+    pub fn from_literal(literal: Literal) -> Self {
+        match literal {
+            Literal::String(s) => Self::String(s),
+            Literal::Number(n) => Self::Number(n),
+        }
+    }
 }
 
 impl std::cmp::PartialOrd for BcValue {
@@ -67,7 +79,13 @@ impl std::ops::Add for BcValue {
                 Self::Number(n2) => Self::Number(n1 + n2),
                 _ => panic!("it is not possible to add non numbers yet"),
             },
-            _ => panic!("it is not possible to add non numbers yet"),
+            Self::String(s1) => match rhs {
+                Self::Bool(b2) => Self::String(format!("{s1}{b2}")),
+                Self::String(s2) => Self::String(format!("{s1}{s2}")),
+                Self::Number(n2) => Self::String(format!("{s1}{n2}")),
+                Self::Undefined => Self::String(format!("{s1}undefined")),
+            },
+            _ => panic!("it is only possible to add to numbers or strings"),
         }
     }
 }
@@ -115,7 +133,7 @@ pub fn run_test() {
             lhs: Source::Register(0),
             rhs: Source::Register(1),
         },
-        Instruction::Jgt { goal: 4 },
+        Instruction::Jgt { goal: 2 },
         Instruction::Return {
             val: Source::Register(0),
         },

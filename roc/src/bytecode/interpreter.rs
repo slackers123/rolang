@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use super::{
-    instructions::{Instruction, Source, Target},
+    instructions::{Instruction, LdCmpType, Source, Target},
     BcFunction, BcValue, Registers,
 };
 
@@ -79,7 +79,7 @@ impl<'a> Interpreter<'a> {
         self.run_fn(name.into(), &mut regs);
         return None;
     }
-    pub fn run_fn(&mut self, name: FunctionIndex, regs: &mut Registers) -> Option<BcValue> {
+    fn run_fn(&mut self, name: FunctionIndex, regs: &mut Registers) -> Option<BcValue> {
         if name == "println" {
             println!("{}", regs.0[0]);
             return None;
@@ -123,7 +123,22 @@ impl<'a> Interpreter<'a> {
                     Instruction::Jgt { goal } => {
                         // println!("if {} then jump to {goal}", running.flags.gt);
                         if running.flags.gt {
-                            idx = *goal as usize;
+                            let target = idx as i64 - 1 + goal;
+                            idx = target as usize;
+                        }
+                    }
+                    Instruction::Je { goal } => {
+                        // println!("if {} then jump to {goal}", running.flags.gt);
+                        if running.flags.eq {
+                            let target = idx as i64 - 1 + goal;
+                            idx = target as usize;
+                        }
+                    }
+                    Instruction::Jne { goal } => {
+                        // println!("if {} then jump to {goal}", running.flags.gt);
+                        if !running.flags.eq {
+                            let target = idx as i64 - 1 + goal;
+                            idx = target as usize;
                         }
                     }
                     Instruction::Sub { target, lhs, rhs } => {
@@ -150,6 +165,28 @@ impl<'a> Interpreter<'a> {
                         // println!("returning {val:?}({:?})", running.get_source(val));
                         return Some(running.get_source(val));
                     }
+                    Instruction::LdCmp { target, ty } => match ty {
+                        LdCmpType::Eq => {
+                            running.write_target(target, BcValue::Bool(running.flags.eq))
+                        }
+                        LdCmpType::Gt => {
+                            running.write_target(target, BcValue::Bool(running.flags.gt))
+                        }
+                        LdCmpType::Gte => running.write_target(
+                            target,
+                            BcValue::Bool(running.flags.gt | running.flags.eq),
+                        ),
+                        LdCmpType::Lt => {
+                            running.write_target(target, BcValue::Bool(running.flags.lt))
+                        }
+                        LdCmpType::Lte => running.write_target(
+                            target,
+                            BcValue::Bool(running.flags.lt | running.flags.eq),
+                        ),
+                        LdCmpType::Neq => {
+                            running.write_target(target, BcValue::Bool(!running.flags.eq))
+                        }
+                    },
                     _ => unimplemented!("{inst:?}"),
                 }
             } else {

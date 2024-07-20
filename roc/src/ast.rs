@@ -342,6 +342,11 @@ impl FromPair for ASTExpr {
             Rule::PrimExpr => {
                 let inner = expr.into_inner().next().unwrap();
                 match inner.as_rule() {
+                    Rule::string => {
+                        let string = inner.as_str();
+                        let len = string.len();
+                        Self::Literal(Literal::String(string[1..len - 1].to_owned()))
+                    }
                     Rule::number => Self::Literal(Literal::Number(inner.as_str().parse().unwrap())),
 
                     Rule::Expr => Self::from_pair(inner),

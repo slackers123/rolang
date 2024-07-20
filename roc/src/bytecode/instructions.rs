@@ -1,3 +1,5 @@
+use crate::ty::BinOp;
+
 use super::interpreter::{ConstId, FunctionIndex, RegId};
 
 #[derive(Debug)]
@@ -26,27 +28,36 @@ pub enum Instruction {
         lhs: Source,
         rhs: Source,
     },
+    Mod {
+        target: Target,
+        lhs: Source,
+        rhs: Source,
+    },
     Cmp {
         lhs: Source,
         rhs: Source,
     },
+    LdCmp {
+        target: Target,
+        ty: LdCmpType,
+    },
     Jne {
-        goal: BytecodeIndex,
+        goal: RelBcIndex,
     },
     Je {
-        goal: BytecodeIndex,
+        goal: RelBcIndex,
     },
     Jlt {
-        goal: BytecodeIndex,
+        goal: RelBcIndex,
     },
     Jlte {
-        goal: BytecodeIndex,
+        goal: RelBcIndex,
     },
     Jgt {
-        goal: BytecodeIndex,
+        goal: RelBcIndex,
     },
     Jgte {
-        goal: BytecodeIndex,
+        goal: RelBcIndex,
     },
     Call {
         target: Option<Target>,
@@ -58,6 +69,9 @@ pub enum Instruction {
 }
 
 pub type BytecodeIndex = u64;
+
+pub type RelBcIndex = i64;
+
 #[derive(Debug)]
 pub enum Target {
     Register(RegId),
@@ -67,4 +81,28 @@ pub enum Target {
 pub enum Source {
     Register(RegId),
     Constant(ConstId),
+}
+
+#[derive(Debug)]
+pub enum LdCmpType {
+    Eq,
+    Neq,
+    Gt,
+    Gte,
+    Lt,
+    Lte,
+}
+
+impl LdCmpType {
+    pub fn from_binop(binop: BinOp) -> Self {
+        match binop {
+            BinOp::Eq => Self::Eq,
+            BinOp::Neq => Self::Neq,
+            BinOp::Gt => Self::Gt,
+            BinOp::Gte => Self::Gte,
+            BinOp::Lt => Self::Lt,
+            BinOp::Lte => Self::Lte,
+            _ => panic!("invalid binop for compare type: {:?}", binop),
+        }
+    }
 }

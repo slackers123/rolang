@@ -42,10 +42,18 @@ AddExpr = { MulExpr ~ ((Add | Sub) ~ MulExpr)* }
 
 MulExpr = { PrimExpr ~ ((Mul | Div | Mod) ~ PrimExpr)* }
 
-PrimExpr = { number | ("(" ~ Expr ~ ")") | FnCall | Ident }
+PrimExpr = { string | number | ("(" ~ Expr ~ ")") | FnCall | Ident }
 
 number = @{ int ~ ("." ~ int)? }
 int    =  { ASCII_DIGIT+ }
+
+string = ${ "\"" ~ inner ~ "\"" }
+inner = @{ char* }
+char = {
+    !("\"" | "\\") ~ ANY
+    | "\\" ~ ("\"" | "\\" | "/" | "b" | "f" | "n" | "r" | "t")
+    | "\\" ~ ("u" ~ ASCII_HEX_DIGIT{4})
+}
 
 Eq  = { "==" }
 Neq = { "!=" }
