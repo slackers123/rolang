@@ -3,3 +3,4 @@ target/
 .vscode/
 .lapce/
 Cargo.lock
+.DS_Store
